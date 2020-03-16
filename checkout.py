@@ -35,10 +35,13 @@ def getVariant(product, size):
 
         #If the size match, it will get the variant_id which is needed for carting
         if size == '11.5':
-            variant = variants['id']
-        return variant
+            variant = str(variants['id'])
+    return variant
 
-# def addToCart():
+def addToCart(variant):
+    atclink = 'https://kith.com' + '/cart/add.js?quantity=1&id=' + variant
+
+    return atclink
 
 # def cartLink():
 
@@ -49,7 +52,8 @@ def getVariant(product, size):
 keywords = 'Kith x Converse Chuck Taylor All Star 1970 Classics - Salsa / Egret / Natural'
 products = getProducts()
 product = checkAvailability(products, keywords)
-getVariant(product, 11.5)
+ssize = getVariant(product, 11.5)
+print(addToCart(ssize))
 
 
 
