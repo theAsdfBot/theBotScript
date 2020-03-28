@@ -75,7 +75,46 @@ def getPaymentToken(card_number, cardholder, expiry_month, expiry_year, cvv):
 
     return payment_token
     
-#def autofill_info():
+def autofill_info(session, cookies):
+
+    # Submit the customer info
+    payload = {
+        "utf8": u"\u2713",
+        "_method": "patch",
+        "authenticity_token": "",
+        "previous_step": "contact_information",
+        "step": "shipping_method",
+        "checkout[email]": email,
+        "checkout[buyer_accepts_marketing]": "0",
+        "checkout[shipping_address][first_name]": fname,
+        "checkout[shipping_address][last_name]": lname,
+        "checkout[shipping_address][company]": "",
+        "checkout[shipping_address][address1]": addr1,
+        "checkout[shipping_address][address2]": addr2,
+        "checkout[shipping_address][city]": city,
+        "checkout[shipping_address][country]": country,
+        "checkout[shipping_address][province]": state,
+        "checkout[shipping_address][zip]": postal_code,
+        "checkout[shipping_address][phone]": phone,
+        "checkout[remember_me]": "0",
+        "checkout[client_details][browser_width]": "1710",
+        "checkout[client_details][browser_height]": "1289",
+        "checkout[client_details][javascript_enabled]": "1",
+        "button": ""
+    }
+
+    link = 'https://kith.com' + "//checkout.json"
+    response = session.get(link, cookies=cookies, verify=False)
+
+    # Get the checkout URL
+    link = response.url
+    checkout_link = link
+
+    # POST the data to the checkout URL
+    response = session.post(link, cookies=cookies, data=payload, verify=False)
+
+    # Return the response and the checkout link
+    return (response, checkout_link)
 
 
 #_________USER SETTING__________________#
@@ -101,14 +140,14 @@ session = requests.session()
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
-keywords = 'Converse WMNS CPX70 High - White / Blue'
+keywords = 'Nike WMNS Zoom x Vista Grind SP - Platinum / Violet / Black'
 products = getProducts()
 product = checkAvailability(products, keywords)
 variant = getVariant(product, 11.5)
 cartResponse = addToCart(session, variant)
 cookies = cartResponse.cookies
 payment_token = getPaymentToken(card_number, cardholder, exp_m, exp_y, cvv)
-
-print(payment_token)
+submit_info = autofill_info(session, cookies)
+print(submit_info)
 
 
